@@ -878,6 +878,13 @@ select {
     display: none;
   }
 }
+/* Small phones: the header phone button doesn't fit next to the wordmark.
+   The bottom bar already has a Call button, so hide it here. */
+@media (max-width: 479px) {
+  .header-phone {
+    display: none;
+  }
+}
 @media (min-width: 640px) {
   .product-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
