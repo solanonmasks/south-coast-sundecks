@@ -1,0 +1,467 @@
+---
+// South Coast Sundecks & Exteriors — one-page site.
+// All the text lives in the lists below or directly in the HTML further down.
+import { Image, getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Layout from '../layouts/Layout.astro';
+
+// ----- Photos -----
+// Every .jpg in src/assets/ is loaded here, so a photo can be used by its
+// file name, e.g. photo('cover') for src/assets/cover.jpg.
+const files = import.meta.glob<{ default: ImageMetadata }>('../assets/*.jpg', { eager: true });
+const photo = (name: string) => files[`../assets/${name}.jpg`].default;
+
+// ----- Contact details -----
+const PHONE = '604 921 9185';
+const PHONE_LINK = 'tel:16049219185';
+
+// ----- Quote form -----
+// Paste your Formspree form URL here (e.g. 'https://formspree.io/f/abcdwxyz')
+// so requests arrive by email. While it's empty, the form does NOT send:
+// it asks visitors to call instead. Connect it before launch (see README).
+const FORM_ENDPOINT = '';
+
+const build = [
+  ['Sundecks', 'Sundeck building, renovating and decking replacement. Vinyl, composite and wood decks.', 'cover'],
+  ['Railings', 'Patio and deck railings in composite, aluminum, glass and wood, including topless glass.', 'g9'],
+  ['Covers & canopies', 'Patio and sundeck cover structures: wood and glass, aluminum and glass, roof additions and timber framing.', 'g4'],
+  ['Outdoor living spaces', 'Covered decks and patios with fireplaces, kitchens, heaters, lighting, windwalls, sun shades, masonry, hardscaping and landscaping.', 'g2'],
+  ['Exterior carpentry', 'Pergolas, privacy walls, structural alterations, staircases, soffits and siding.', 'g17'],
+];
+
+// [kind, name, description, photo]
+const products = [
+  ['Vinyl decking', 'Tufdek', 'Authorised Vancouver Tufdek dealer, including the Designer Greystone aggregate series.', 'greystone'],
+  ['Composite decking', 'TimberTech', 'Composite decking installed for a low-maintenance finish.', 'composite'],
+  ['Topless glass railings', 'Innovative Aluminum Infinity', 'Frameless glass railings that keep the view open.', 'topless'],
+  ['Retractable screens', 'Phantom Screens', 'Retractable screens and sun shades for covered outdoor spaces.', 'g13'],
+];
+
+const galleryNames = ['g2', 'cover', 'g9', 'g13', 'rail', 'g17', 'g20', 'craftsman', 'tufglass', 'cedar', 'g14', 'patio', 'g10', 'g4', 'birch', 'g16'];
+// Each gallery photo also gets a full-size WebP for the lightbox.
+const gallery = await Promise.all(
+  galleryNames.map(async (name) => {
+    const full = await getImage({ src: photo(name), format: 'webp' });
+    return { img: photo(name), full: full.src };
+  }),
+);
+
+const areas = ['North Shore', 'West Vancouver', 'North Vancouver', 'Vancouver', 'Burnaby', 'Lions Bay', 'Squamish'];
+
+const marquee = ['Vinyl decks', 'Composite decks', 'Wood decks', 'Glass railings', 'Aluminum railings', 'Patio covers', 'Pergolas', 'Timber framing', 'Stamped concrete', 'Paving stones', 'Retractable screens', 'Staircases'];
+
+const chips = ['New deck', 'Deck rebuild', 'Railings', 'Cover or canopy', 'Patio', 'Outdoor living space'];
+
+const pad = (i: number) => String(i + 1).padStart(2, '0');
+---
+
+<Layout
+  title="South Coast Sundecks & Exteriors | Decks, railings and patio covers, North Shore"
+  description="Quality-built decks, railings, patios, covers and complete outdoor living spaces across Vancouver and the North Shore. Authorised Vancouver Tufdek dealer. Call 604 921 9185."
+>
+  <div id="top" class="page">
+    <!-- ===== Header ===== -->
+    <header class="site-header">
+      <div class="wrap">
+        <a href="#top" class="wordmark">
+          <span class="sun-mark" aria-hidden="true"><span class="sun"></span><span class="horizon"></span></span>
+          <span class="wordmark-text">
+            <span class="wordmark-name">South Coast Sundecks</span>
+            <span class="wordmark-sub">&amp; Exteriors Ltd.</span>
+          </span>
+        </a>
+        <nav class="main-nav" aria-label="Main">
+          <a href="#build">What we build</a>
+          <a href="#products">Products</a>
+          <a href="#gallery">Gallery</a>
+          <a href="#areas">Service areas</a>
+        </nav>
+        <a href={PHONE_LINK} class="header-phone">{PHONE}</a>
+      </div>
+    </header>
+
+    <main>
+      <!-- ===== Hero ===== -->
+      <section class="hero">
+        <div class="hero-bg">
+          <Image
+            src={photo('g2')}
+            alt="Covered deck with glass railing by South Coast Sundecks"
+            widths={[600, 1024]}
+            sizes="100vw"
+            loading="eager"
+            fetchpriority="high"
+          />
+        </div>
+        <div class="hero-shade"></div>
+        <div class="wrap hero-content">
+          <div class="hero-left">
+            <span data-hero style="--i:0" class="eyebrow">North Shore deck &amp; railing company</span>
+            <h1 data-hero style="--i:1">Start now. Enjoy it all season long.</h1>
+          </div>
+          <div class="hero-right">
+            <p data-hero style="--i:2" class="hero-text">
+              Quality-built decks, railings, patios, covers and complete outdoor living spaces across Vancouver and the
+              North Shore.
+            </p>
+            <div data-hero style="--i:3" class="btn-row">
+              <a href="#quote" class="btn btn-orange">Request a quote</a>
+              <a href="#gallery" class="btn btn-outline">See the gallery</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Orange marquee (the list is shown twice so it loops smoothly) ===== -->
+      <section class="marquee">
+        <div class="marquee-track">
+          {
+            [...marquee, ...marquee].map((m, i) => (
+              <span class="marquee-item" aria-hidden={i >= marquee.length ? 'true' : undefined}>
+                {m}
+                <span class="marquee-dot" />
+              </span>
+            ))
+          }
+        </div>
+      </section>
+
+      <!-- ===== Intro ===== -->
+      <section class="wrap section-pad two-col intro">
+        <h2 data-reveal class="h2">Nobody provides <span class="accent">better value.</span></h2>
+        <p data-reveal class="intro-text">
+          A highly recommended Vancouver sundeck, railing and outdoor living space company on the North Shore. We’re
+          experts in quality-built decks, railings, patios, structure construction, outdoor living projects and exterior
+          finishing.
+        </p>
+      </section>
+
+      <!-- ===== What we build ===== -->
+      <section id="build" class="on-navy">
+        <div class="wrap section-pad">
+          <h2 data-reveal class="h2 build-title">What we build</h2>
+          <div data-reveal class="build">
+            <div class="build-list">
+              {
+                build.map(([t, d], i) => (
+                  <button type="button" class="build-row" aria-pressed={i === 0 ? 'true' : 'false'} data-index={i}>
+                    <span class="build-head">
+                      <span class="build-bar" />
+                      <span class="build-name">{t}</span>
+                    </span>
+                    <span class="build-desc" hidden={i !== 0}>
+                      {d}
+                    </span>
+                  </button>
+                ))
+              }
+            </div>
+            <div class="build-photo">
+              {
+                build.map(([t, , img], i) => (
+                  <Image
+                    src={photo(img)}
+                    alt={t}
+                    widths={[600, 1000]}
+                    sizes="(min-width: 980px) 55vw, 100vw"
+                    class={i === 0 ? 'is-active' : ''}
+                    data-index={i}
+                  />
+                ))
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Products ===== -->
+      <section id="products" class="wrap section-pad">
+        <div data-reveal class="section-head">
+          <h2 class="h2">Products we install</h2>
+          <p>Authorised Vancouver Tufdek dealer, plus the decking, railing and screen systems we trust.</p>
+        </div>
+        <div class="product-grid">
+          {
+            products.map(([k, t, d, img]) => (
+              <div data-reveal class="product">
+                <div class="product-photo">
+                  <Image
+                    src={photo(img)}
+                    alt={t}
+                    widths={[400, 700, 1000]}
+                    sizes="(max-width: 639px) 100vw, (max-width: 1099px) 50vw, 25vw"
+                  />
+                </div>
+                <div class="product-body">
+                  <span class="product-kind">{k}</span>
+                  <h3>{t}</h3>
+                  <p>{d}</p>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </section>
+
+      <!-- ===== Gallery ===== -->
+      <section id="gallery" class="on-navy gallery">
+        <div class="wrap gallery-head">
+          <h2 data-reveal class="h2">See the difference<br /><span class="accent-light">a South Coast deck makes.</span></h2>
+          <div data-reveal class="gallery-arrows">
+            <button type="button" class="arrow arrow-prev" aria-label="Previous photos">←</button>
+            <button type="button" class="arrow arrow-next" aria-label="Next photos">→</button>
+          </div>
+        </div>
+        <div class="rail">
+          {
+            gallery.map((g, i) => (
+              <button type="button" class="rail-item" data-full={g.full} data-index={i} aria-label={`Open photo ${i + 1} of ${gallery.length}`}>
+                <Image
+                  src={g.img}
+                  alt="South Coast Sundecks project"
+                  widths={[500, 800, 1100]}
+                  sizes="(max-width: 699px) 82vw, min(46vw, 640px)"
+                />
+              </button>
+            ))
+          }
+        </div>
+      </section>
+
+      <!-- ===== Service areas ===== -->
+      <section id="areas" class="wrap section-pad two-col areas">
+        <div data-reveal class="areas-intro">
+          <h2 class="h2">Where we build</h2>
+          <p>
+            Serving greater Vancouver, from the North Shore to Squamish. We also work with contractors, property managers
+            and multi-unit buildings.
+          </p>
+        </div>
+        <div class="area-list">
+          {
+            areas.map((t, i) => (
+              <div data-reveal class="area">
+                <span class="area-name">{t}</span>
+                <span class="area-n">{pad(i)}</span>
+              </div>
+            ))
+          }
+        </div>
+      </section>
+
+      <!-- ===== Quote ===== -->
+      <section id="quote" class="quote">
+        <div class="wrap section-pad two-col">
+          <div class="quote-info">
+            <h2 data-reveal class="quote-title">Request a quote.</h2>
+            <p data-reveal class="quote-text">
+              Tell us what you’re planning: a new deck, a rebuild, railings, a cover or a full outdoor living space. Ask
+              about our seasonal incentives.
+            </p>
+            <a data-reveal href={PHONE_LINK} class="big-phone">{PHONE}</a>
+          </div>
+
+          <div data-reveal>
+            <form id="quote-form" class="form-card" action={FORM_ENDPOINT} method="POST">
+              <div class="field-row">
+                <label class="field">Name<input name="name" required autocomplete="name" /></label>
+                <label class="field">Phone<input name="phone" type="tel" autocomplete="tel" /></label>
+              </div>
+              <label class="field">Email<input name="email" type="email" required autocomplete="email" /></label>
+              <div class="chips-group">
+                <span class="chips-label" id="chips-label">I’m interested in</span>
+                <div class="chips" role="group" aria-labelledby="chips-label">
+                  {
+                    chips.map((c) => (
+                      <button type="button" class="chip" aria-pressed="false" data-value={c}>
+                        {c}
+                      </button>
+                    ))
+                  }
+                </div>
+                <input type="hidden" name="interests" />
+              </div>
+              <label class="field">Project details<textarea name="details" rows="4"></textarea></label>
+              <p class="form-error" role="alert" hidden>
+                <span class="form-error-text"></span>{' '}<a href={PHONE_LINK}>{PHONE}</a>.
+              </p>
+              <button type="submit" class="submit-btn">Send request</button>
+            </form>
+            <p id="quote-thanks" class="thanks" hidden>Thanks. We’ll be in touch about your project.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===== Footer ===== -->
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="footer-name">© {new Date().getFullYear()} South Coast Sundecks &amp; Exteriors Ltd.</span>
+        <span>Authorised Tufdek dealer · North Shore, BC</span>
+        <a href="https://backpackdigitalmedia.com" target="_blank" rel="noopener">Powered by Backpack Digital Media</a>
+      </div>
+    </footer>
+
+    <!-- ===== Mobile call bar (shows below 980px) ===== -->
+    <div class="mobile-bar">
+      <a href={PHONE_LINK} class="call">Call</a>
+      <a href="#quote" class="quote-link">Get a quote</a>
+    </div>
+
+    <!-- ===== Gallery lightbox ===== -->
+    <div class="lightbox" role="dialog" aria-modal="true" aria-label="Project photo" hidden>
+      <img class="lightbox-img" src="" alt="Project photo" />
+      <button type="button" class="lightbox-close" aria-label="Close photo">×</button>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // ---------- Scroll reveal ----------
+  // Each [data-reveal] element fades up when it scrolls into view.
+  // Siblings are staggered by 80ms.
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const revealEls = document.querySelectorAll<HTMLElement>('[data-reveal]');
+
+  if (reduce || !('IntersectionObserver' in window)) {
+    revealEls.forEach((el) => el.classList.add('is-in'));
+  } else {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const el = entry.target as HTMLElement;
+          const siblings = Array.from(el.parentElement?.children ?? []).filter((n) => n.hasAttribute('data-reveal'));
+          el.style.setProperty('--delay', `${Math.max(0, siblings.indexOf(el)) * 0.08}s`);
+          el.classList.add('is-in');
+          io.unobserve(el);
+        });
+      },
+      { rootMargin: '0px 0px -8% 0px' },
+    );
+    revealEls.forEach((el) => io.observe(el));
+  }
+
+  // ---------- What we build ----------
+  // Clicking a row shows its description and crossfades to its photo.
+  const buildRows = document.querySelectorAll<HTMLButtonElement>('.build-row');
+  const buildPhotos = document.querySelectorAll<HTMLImageElement>('.build-photo img');
+  buildRows.forEach((row) =>
+    row.addEventListener('click', () => {
+      const index = row.dataset.index;
+      buildRows.forEach((r) => {
+        const on = r.dataset.index === index;
+        r.setAttribute('aria-pressed', String(on));
+        r.querySelector<HTMLElement>('.build-desc')!.hidden = !on;
+      });
+      buildPhotos.forEach((img) => img.classList.toggle('is-active', img.dataset.index === index));
+    }),
+  );
+
+  // ---------- Gallery arrows ----------
+  const rail = document.querySelector<HTMLElement>('.rail');
+  const step = () => Math.min((rail?.clientWidth ?? 750) * 0.8, 700);
+  document.querySelector('.arrow-prev')?.addEventListener('click', () => rail?.scrollBy({ left: -step(), behavior: 'smooth' }));
+  document.querySelector('.arrow-next')?.addEventListener('click', () => rail?.scrollBy({ left: step(), behavior: 'smooth' }));
+
+  // ---------- Lightbox ----------
+  // Click a photo to open it large. Esc or a click closes it; arrow keys move between photos.
+  const lightbox = document.querySelector<HTMLElement>('.lightbox')!;
+  const lightboxImg = lightbox.querySelector<HTMLImageElement>('.lightbox-img')!;
+  const closeBtn = lightbox.querySelector<HTMLButtonElement>('.lightbox-close')!;
+  const railItems = Array.from(document.querySelectorAll<HTMLButtonElement>('.rail-item'));
+  let current = -1;
+  let lastFocus: HTMLElement | null = null;
+
+  const show = (i: number) => {
+    current = (i + railItems.length) % railItems.length;
+    lightboxImg.src = railItems[current].dataset.full ?? '';
+  };
+  const openLightbox = (i: number) => {
+    lastFocus = document.activeElement as HTMLElement;
+    show(i);
+    lightbox.hidden = false;
+    document.documentElement.classList.add('no-scroll');
+    closeBtn.focus();
+  };
+  const closeLightbox = () => {
+    lightbox.hidden = true;
+    current = -1;
+    document.documentElement.classList.remove('no-scroll');
+    lastFocus?.focus();
+  };
+
+  railItems.forEach((item, i) => item.addEventListener('click', () => openLightbox(i)));
+  lightbox.addEventListener('click', closeLightbox);
+  document.addEventListener('keydown', (e) => {
+    if (lightbox.hidden) return;
+    if (e.key === 'Escape') closeLightbox();
+    else if (e.key === 'ArrowRight') show(current + 1);
+    else if (e.key === 'ArrowLeft') show(current - 1);
+    else if (e.key === 'Tab') {
+      // Keep keyboard focus inside the lightbox
+      e.preventDefault();
+      closeBtn.focus();
+    }
+  });
+
+  // ---------- Interest chips ----------
+  const form = document.getElementById('quote-form') as HTMLFormElement | null;
+  const thanks = document.getElementById('quote-thanks');
+
+  if (form && thanks) {
+    const interestsInput = form.querySelector<HTMLInputElement>('input[name="interests"]')!;
+    const errorBox = form.querySelector<HTMLElement>('.form-error')!;
+    const errorText = form.querySelector<HTMLElement>('.form-error-text')!;
+    const submitBtn = form.querySelector<HTMLButtonElement>('.submit-btn')!;
+    const chipButtons = form.querySelectorAll<HTMLButtonElement>('.chip');
+
+    const updateInterests = () => {
+      interestsInput.value = Array.from(chipButtons)
+        .filter((b) => b.getAttribute('aria-pressed') === 'true')
+        .map((b) => b.dataset.value)
+        .join(', ');
+    };
+    chipButtons.forEach((btn) =>
+      btn.addEventListener('click', () => {
+        btn.setAttribute('aria-pressed', btn.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+        updateInterests();
+      }),
+    );
+
+    const showError = (text: string) => {
+      errorText.textContent = text;
+      errorBox.hidden = false;
+    };
+
+    // ---------- Form submit ----------
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorBox.hidden = true;
+      updateInterests();
+      const endpoint = form.getAttribute('action');
+
+      // No form service connected yet: don't pretend it sent. Ask them to call.
+      if (!endpoint) {
+        showError('Our online form isn’t connected yet. Please call us at');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        form.hidden = true;
+        thanks.hidden = false;
+      } catch {
+        showError('Sorry, that didn’t send. Please try again or call us at');
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  }
+</script>
